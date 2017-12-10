@@ -1,56 +1,125 @@
 /* 
+ * Organization:
+ * Contributor: Justin Baca
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
 function FindProxyForURL(url, host){
+    /* List of allowed local hostnames not using proxy as an array of lowercase strings
+     * hostnames in format 'MyHostName' 
+     */
+    // EDIT ME
+    var exemptLocalHostNames = []
+    
+    /* List of allowed domains and domain names not using proxy as an array of lowercase strings
+     * domains in format '.domain.com'
+     * domain names in format 'my.domain.com'
+     */
+    // EDIT ME
+    var exemptDomainNames = []
+    
+    /* List of allowed IP Addresses and Subnets not using proxy as an array of objects with string values
+     * IP Addresses in format:
+     * {
+     *      'address': '1.1.1.1',
+     *      'network': '255.0.0.0'
+     * }
+     */
+    // EDIT ME
+    var exemptIPAddresses = [
+        {
+            'address': '0.0.0.0',
+            'network': '255.0.0.0'
+        },
+        {
+            'address': '10.0.0.0',
+            'network': '255.0.0.0'
+        },
+        {
+            'address': '127.0.0.0',
+            'network': '255.0.0.0'
+        },
+        {
+            'address': '169.254.0.0',
+            'network': '255.255.0.0'
+        },
+        {
+            'address': '172.16.0.0',
+            'network': '255.240.0.0'
+        },
+        {
+            'address': '192.0.2.0',
+            'network': '255.255.255.0'
+        },
+        {
+            'address': '192.88.99.0',
+            'network': '255.255.255.0'
+        },
+        {
+            'address': '192.168.0.0',
+            'network': '255.255.0.0'
+        },
+        {
+            'address': '198.18.0.0',
+            'network': '255.254.0.0'
+        },
+        {
+            'address': '224.0.0.0',
+            'network': '240.0.0.0'
+        },
+        {
+            'address': '240.0.0.0',
+            'network': '240.0.0.0'
+        },
+    ]
+    
+    
     /* Normalize the URL for pattern matching */
     url = url.toLowerCase();
     host = host.toLowerCase();
-    
-    /* List of allowed local hostnames not using proxy as an array of lowercase strings*/    
-    var localHostNames = []
+
     /* Don't proxy local hostnames */    
     if (isPlainHostName(host)){
-        if(localHostNames.length > 0){
-            if(localHostNames.indexOf(host) >= 0){
+        if(exemptLocalHostNames.length > 0){
+            if(exemptLocalHostNames.indexOf(host) >= 0){
                 return 'DIRECT';
-            }
-        }
-    }
+            } //end if
+        } //end if
+    } //end if
+    
+    /* Don't proxy specific domains and domain names */
+    if(exemptDomainNames.length > 0){
+        for(var i =0;i < exemptDomainNames.length;i++){
+            if(exemptDomainNames[i][0] == '.'){
+                if(dnsDomainIs(host, exemptDomainNames[i])){
+                    return 'DIRECT';
+                } //end if
+            } //end if
+            else{
+                if(host == exemptDomainNames[i]){
+                    return 'DIRECT';
+                } //end if
+            } //end else
+        } //end for
+    } //end if
 
-    /* Don't proxy local domains */
-    if (dnsDomainIs(host, ".example1.com") ||
-        (host == "example1.com") ||
-        dnsDomainIs(host, ".example2.com") ||
-        (host == "example2.com") ||
-        dnsDomainIs(host, ".example3.com") ||
-        (host == "example3.com")){
+    /* Don't proxy specific non-routable addresses (RFC 3330) */
+    if(exemptIPAddresses.length > 0){
+        for(var i =0;i < exemptIPAddresses.length;i++){
+            if(isInNet(hostIP, exemptIPAddresses[i].address,exemptIPAddresses[i].network)){
+                return 'DIRECT';
+            } //end if
+        } //end for
+    } //end if
+
+    /* Don't proxy local addresses.*/
+    if (false)
+    {
         return 'DIRECT';
     }
-        /* Don't proxy non-routable addresses (RFC 3330) */
-        if (isInNet(hostIP, '0.0.0.0', '255.0.0.0') ||
-                isInNet(hostIP, '10.0.0.0', '255.0.0.0') ||
-                isInNet(hostIP, '127.0.0.0', '255.0.0.0') ||
-                isInNet(hostIP, '169.254.0.0', '255.255.0.0') ||
-                isInNet(hostIP, '172.16.0.0', '255.240.0.0') ||
-                isInNet(hostIP, '192.0.2.0', '255.255.255.0') ||
-                isInNet(hostIP, '192.88.99.0', '255.255.255.0') ||
-                isInNet(hostIP, '192.168.0.0', '255.255.0.0') ||
-                isInNet(hostIP, '198.18.0.0', '255.254.0.0') ||
-                isInNet(hostIP, '224.0.0.0', '240.0.0.0') ||
-                isInNet(hostIP, '240.0.0.0', '240.0.0.0'))
-        {
-        return 'DIRECT';
-        }
-
-        /* Don't proxy local addresses.*/
-        if (false)
-        {
-        return 'DIRECT';
-        }
-        }
-
+}
+/*
 if (url.substring(0, 5) == 'http:' ||
         url.substring(0, 6) == 'https:' ||
         url.substring(0, 4) == 'ftp:')
@@ -80,3 +149,4 @@ if (isInNet(myIpAddress(), "10.4.0.0", "255.255.0.0"))
                 }
 else return "DIRECT";
         }
+*/
