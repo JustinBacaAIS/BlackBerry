@@ -22,3 +22,6 @@ The follow variables need to be modified according to organizational requirement
 
     var proxyToNetworkMap;
 ```
+
+### Variable Specifics
+    -proxyHostName*
