@@ -6,6 +6,12 @@
  * and open the template in the editor.
  */
 function FindProxyForURL(url, host){
+    /* Default PROXY port numbers */
+    var proxyPortHTTP = "8080";
+    var proxyPortHTTPS = "8443";
+    var proxyPortDefault = "8080";
+    var proxyPortFinal = "";
+    
     /* List of allowed local hostnames not using proxy as an array of lowercase strings
      * hostnames in format 'MyHostName' 
      */
@@ -114,9 +120,20 @@ function FindProxyForURL(url, host){
     } //end if
 
     /* Don't proxy local addresses.*/
-    if (false)
+    /*if (false)
     {
         return 'DIRECT';
+    }*/
+    
+    /* Set the Proxy Port based on Protocol */
+    if(url.substring(0,5) == 'http:'){
+        proxyPortFinal = proxyPortHTTP;
+    }
+    else if(url.substring(0,6) == 'https:'){
+        proxyPortFinal = proxyPortHTTPS;
+    }
+    else{
+        proxyPortFinal = proxyPortDefault;
     }
 }
 /*
