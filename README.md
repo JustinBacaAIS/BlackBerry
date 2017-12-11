@@ -24,4 +24,7 @@ The follow variables need to be modified according to organizational requirement
 ```
 
 ### Variable Specifics
-    -proxyHostName*
+*proxyPort*
+  1. The declared variables are for HTTP & HTTPS, if support for other protocols is needed declare additional variables and assign them accordingly in the section labeled
+** Set the Proxy Port based on Protocol **
+*proxyHostName*
